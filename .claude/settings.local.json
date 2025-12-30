@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "WebSearch",
+      "WebFetch(domain:polar.sh)",
+      "WebFetch(domain:ai.google.dev)",
+      "Bash(mkdir:*)",
+      "Bash(node /Users/admin/projects/feelmagic/.claude/scripts/set-active-plan.cjs:*)",
+      "Bash(npx create-next-app@latest valentine-ar --typescript --tailwind --app --src-dir --import-alias \"@/*\" --use-pnpm --no-git)",
+      "Bash(pkill:*)",
+      "Bash(pnpm create:*)",
+      "Bash(pnpm install)",
+      "Bash(pnpm approve-builds:*)",
+      "Bash(pnpm update:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm install:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(find:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:*)",
+      "Bash(pnpm run lint)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(test:*)",
+      "Bash(npm install:*)",
+      "Bash(npx next lint:*)",
+      "Bash(npm run lint:*)",
+      "Skill(sequential-thinking)",
+      "Bash(wc:*)",
+      "Bash(node --version:*)",
+      "Bash(pnpm --version:*)",
+      "Bash(chmod:*)",
+      "Bash(git add:*)",
+      "Bash(awk:*)",
+      "Bash(git init:*)",
+      "Bash(git config:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
