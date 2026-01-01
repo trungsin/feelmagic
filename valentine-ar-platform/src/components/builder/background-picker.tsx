@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useBuilder } from "./builder-provider";
 import { BackgroundType } from "@prisma/client";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { Upload, X, Check, Loader2 } from "lucide-react";
 
 // Sample backgrounds (will be replaced with real data)
 const SAMPLE_IMAGES = [
@@ -23,6 +24,9 @@ const SAMPLE_VIDEOS = [
 export function BackgroundPicker() {
   const { customization, updateCustomization } = useBuilder();
   const [colorValue, setColorValue] = useState(customization.backgroundColor || "#ff69b4");
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleTabChange = (value: string) => {
     const bgType = value.toUpperCase() as BackgroundType;
@@ -56,6 +60,46 @@ export function BackgroundPicker() {
       backgroundUrl: url,
       backgroundColor: null,
     });
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Simulate upload with progress
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    const interval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev >= 95) {
+          clearInterval(interval);
+          return 95;
+        }
+        return prev + 5;
+      });
+    }, 100);
+
+    // Simulate async upload delay
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // In a real app, we would upload to storage here
+      // For now, create a local object URL
+      const url = URL.createObjectURL(file);
+
+      clearInterval(interval);
+      setUploadProgress(100);
+
+      handleImageSelect(url);
+    } catch (error) {
+      console.error("Upload failed", error);
+    } finally {
+      setTimeout(() => {
+        setIsUploading(false);
+        setUploadProgress(0);
+      }, 500);
+    }
   };
 
   return (
@@ -95,27 +139,67 @@ export function BackgroundPicker() {
         </TabsContent>
 
         <TabsContent value="image" className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            {SAMPLE_IMAGES.map((url, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleImageSelect(url)}
-                className={`relative aspect-video rounded-lg overflow-hidden border-2 transition-all ${
-                  customization.backgroundUrl === url
-                    ? "border-primary ring-2 ring-primary/20"
-                    : "border-transparent hover:border-primary/50"
-                }`}
-              >
-                <img
-                  src={url}
-                  alt={`Background ${idx + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            ))}
+          <div className="space-y-3">
+            <div
+              className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:bg-muted/50 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileUpload}
+                disabled={isUploading}
+              />
+              {isUploading ? (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Uploading... {uploadProgress}%
+                  </div>
+                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-primary transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                  <Upload className="h-6 w-6" />
+                  <span className="text-sm">Upload your own image</span>
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {SAMPLE_IMAGES.map((url, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleImageSelect(url)}
+                  className={`relative aspect-video rounded-lg overflow-hidden border-2 transition-all ${
+                    customization.backgroundUrl === url
+                      ? "border-primary ring-2 ring-primary/20"
+                      : "border-transparent hover:border-primary/50"
+                  }`}
+                >
+                  <img
+                    src={url}
+                    alt={`Background ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  {customization.backgroundUrl === url && (
+                    <div className="absolute top-1 right-1 bg-primary text-white rounded-full p-0.5">
+                      <Check className="h-3 w-3" />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            Select an image background
+            Select an image or upload your own
           </p>
         </TabsContent>
 
@@ -140,6 +224,11 @@ export function BackgroundPicker() {
                     <p className="text-xs text-muted-foreground">{url}</p>
                   </div>
                 </div>
+                {customization.backgroundUrl === url && (
+                  <div className="absolute top-2 right-2 text-primary">
+                    <Check className="h-4 w-4" />
+                  </div>
+                )}
               </button>
             ))}
           </div>

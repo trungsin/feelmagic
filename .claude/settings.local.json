@@ -36,7 +36,16 @@
       "Bash(awk:*)",
       "Bash(git init:*)",
       "Bash(git config:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(pip3 install:*)",
+      "Bash(.claude/skills/.venv/bin/python3:*)",
+      "Bash(node:*)",
+      "Bash(npx eslint:*)",
+      "Bash(pnpm db:studio)",
+      "Skill(planning)",
+      "Bash(npx prisma db:*)",
+      "Bash(curl:*)",
+      "Bash(echo:*)"
     ]
   }
 }

@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from "next/server"
  * GET /api/admin/users
  * List all users with their roles and stats
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     await requireAdminAPI()
 

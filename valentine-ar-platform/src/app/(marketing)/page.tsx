@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Heart, Hand, Mic, Sparkles, Gift, Share2, Zap } from "lucide-react"
+import { Hand, Mic, Sparkles, Gift, Share2, Zap } from "lucide-react"
 
 export const metadata = {
   title: "Valentine AR - Create Magical AR Valentine Cards",
@@ -22,7 +22,7 @@ export default function HomePage() {
               Make this Valentine&apos;s Day unforgettable with personalized AR experiences.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Button asChild size="lg" className="bg-valentine-500 hover:bg-valentine-600">
+              <Button asChild size="lg" className="bg-valentine-500 hover:bg-valentine-600 shadow-[0_0_20px_rgba(236,72,153,0.5)] hover:shadow-[0_0_30px_rgba(236,72,153,0.7)] transition-all duration-300">
                 <Link href="/templates">Browse Templates</Link>
               </Button>
               <Button asChild variant="outline" size="lg">
@@ -30,12 +30,39 @@ export default function HomePage() {
               </Button>
             </div>
 
-            {/* Video Demo Placeholder */}
-            <div className="mt-16 relative aspect-video w-full max-w-3xl mx-auto rounded-xl overflow-hidden shadow-2xl border border-gray-200">
-              <div className="absolute inset-0 bg-gradient-to-br from-valentine-100 to-pink-100 flex items-center justify-center">
-                <div className="text-center">
-                  <Heart className="mx-auto h-16 w-16 text-valentine-400 mb-4 animate-pulse" />
-                  <p className="text-gray-600">AR Card Demo Video</p>
+            {/* Video Demo */}
+            <div className="mt-16 relative aspect-video w-full max-w-3xl mx-auto rounded-xl overflow-hidden shadow-2xl border border-gray-200 bg-black group">
+              <video
+                className="w-full h-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+                poster="/demo-poster.jpg"
+                onError={(e) => {
+                  (e.target as HTMLVideoElement).style.display = 'none';
+                  const fallback = (e.target as HTMLVideoElement).nextElementSibling as HTMLElement;
+                  if (fallback) fallback.style.display = 'flex';
+                }}
+              >
+                <source src="/demo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+
+              {/* Fallback Animation */}
+              <div
+                className="absolute inset-0 bg-gradient-to-br from-valentine-100 to-pink-100 hidden flex-col items-center justify-center"
+                style={{ display: 'none' }}
+              >
+                <Sparkles className="w-16 h-16 text-valentine-500 animate-pulse mb-4" />
+                <p className="text-valentine-600 font-medium">Experience the Magic of AR</p>
+                <p className="text-valentine-400 text-sm mt-2">Demo video coming soon</p>
+              </div>
+
+              {/* Play Overlay */}
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform">
+                  <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[15px] border-l-white border-b-[10px] border-b-transparent ml-1" />
                 </div>
               </div>
             </div>
@@ -161,52 +188,41 @@ export default function HomePage() {
       {/* Features Highlight */}
       <section className="py-24 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold mb-6">
-                Why Choose Valentine AR?
-              </h2>
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-valentine-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Zap className="h-5 w-5 text-valentine-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Easy to Use</h3>
-                    <p className="text-gray-600">
-                      No app download required. Works directly in the browser on any device.
-                    </p>
-                  </div>
-                </div>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold">
+              Why Choose Valentine AR?
+            </h2>
+          </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Share2 className="h-5 w-5 text-pink-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Instant Sharing</h3>
-                    <p className="text-gray-600">
-                      Share via link, QR code, or social media. No complicated setup.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Sparkles className="h-5 w-5 text-purple-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Truly Memorable</h3>
-                    <p className="text-gray-600">
-                      Create an experience they&apos;ll never forget with interactive AR magic.
-                    </p>
-                  </div>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="flex flex-col items-center text-center p-8 bg-valentine-50 rounded-2xl border border-valentine-100">
+              <div className="w-14 h-14 bg-valentine-100 rounded-xl flex items-center justify-center mb-6">
+                <Zap className="h-7 w-7 text-valentine-500" />
               </div>
+              <h3 className="text-xl font-semibold mb-3">Easy to Use</h3>
+              <p className="text-gray-600">
+                No app download required. Works directly in the browser on any device.
+              </p>
             </div>
 
-            <div className="relative aspect-square bg-gradient-to-br from-valentine-100 to-pink-100 rounded-2xl flex items-center justify-center">
-              <Heart className="h-32 w-32 text-valentine-300 animate-pulse" />
+            <div className="flex flex-col items-center text-center p-8 bg-pink-50 rounded-2xl border border-pink-100">
+              <div className="w-14 h-14 bg-pink-100 rounded-xl flex items-center justify-center mb-6">
+                <Share2 className="h-7 w-7 text-pink-500" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Instant Sharing</h3>
+              <p className="text-gray-600">
+                Share via link, QR code, or social media. No complicated setup.
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center text-center p-8 bg-purple-50 rounded-2xl border border-purple-100">
+              <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
+                <Sparkles className="h-7 w-7 text-purple-500" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Truly Memorable</h3>
+              <p className="text-gray-600">
+                Create an experience they&apos;ll never forget with interactive AR magic.
+              </p>
             </div>
           </div>
         </div>

@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,28 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ============ ENUMS ============
-
-enum UserRole {
-  USER
-  ADMIN
-}
-
-enum OrderStatus {
-  PENDING
-  PAID
-  FAILED
-  REFUNDED
-}
-
-enum BackgroundType {
-  IMAGE
-  VIDEO
-  COLOR
-}
-
-// ============ MODELS ============
-
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
@@ -39,36 +14,31 @@ model User {
   image         String?
   emailVerified DateTime?
   role          UserRole  @default(USER)
-
-  // Relations
-  orders        Order[]
-  cards         Card[]
-  accounts      Account[]
-  sessions      Session[]
-
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  cards         Card[]
+  orders        Order[]
+  sessions      Session[]
 
   @@index([email])
   @@index([role])
 }
 
-// NextAuth.js required models
 model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -92,62 +62,45 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// ============ BUSINESS MODELS ============
-
 model Template {
-  id              String   @id @default(cuid())
-  title           String
-  description     String   @db.Text
-  previewImage    String   // URL to preview image
-  previewVideo    String?  // URL to video demo
-  price           Decimal  @db.Decimal(10, 2)
-  polarProductId  String   @unique // Polar product ID
-  isActive        Boolean  @default(true)
-  sortOrder       Int      @default(0)
-
-  // Default configuration cho template này
-  defaultConfig   Json     @default("{}")
-  // Available effects for this template
+  id               String   @id @default(cuid())
+  title            String
+  description      String
+  previewImage     String
+  previewVideo     String?
+  price            Decimal  @db.Decimal(10, 2)
+  polarProductId   String   @unique
+  isActive         Boolean  @default(true)
+  sortOrder        Int      @default(0)
+  defaultConfig    Json     @default("{}")
   availableEffects String[] @default([])
-  // Available music options
-  availableMusic  String[] @default([])
-
-  // Relations
-  orders          Order[]
-  cards           Card[]
-
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  availableMusic   String[] @default([])
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  cards            Card[]
+  orders           Order[]
 
   @@index([isActive, sortOrder])
   @@index([polarProductId])
 }
 
 model Order {
-  id            String      @id @default(cuid())
-  userId        String?     // Nullable for guest checkout
-  templateId    String
-  polarOrderId  String      @unique // Polar order ID
-  polarCheckoutId String?   // Polar checkout session ID
-  status        OrderStatus @default(PENDING)
-  amount        Decimal     @db.Decimal(10, 2)
-  currency      String      @default("USD")
-
-  // Customer info (for guest checkout)
-  customerEmail String?
-  customerName  String?
-
-  // Metadata from Polar
-  metadata      Json        @default("{}")
-
-  paidAt        DateTime?
-
-  // Relations
-  user          User?       @relation(fields: [userId], references: [id])
-  template      Template    @relation(fields: [templateId], references: [id])
-  card          Card?       // One order creates one card
-
-  createdAt     DateTime    @default(now())
+  id              String      @id @default(cuid())
+  userId          String?
+  templateId      String
+  polarOrderId    String      @unique
+  polarCheckoutId String?
+  status          OrderStatus @default(PENDING)
+  amount          Decimal     @db.Decimal(10, 2)
+  currency        String      @default("USD")
+  customerEmail   String?
+  customerName    String?
+  metadata        Json        @default("{}")
+  paidAt          DateTime?
+  createdAt       DateTime    @default(now())
+  card            Card?
+  template        Template    @relation(fields: [templateId], references: [id])
+  user            User?       @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([templateId])
@@ -158,53 +111,31 @@ model Order {
 
 model Card {
   id              String         @id @default(cuid())
-  slug            String         @unique // Shareable URL slug
-  userId          String?        // Owner (nullable for guest)
+  slug            String         @unique
+  userId          String?
   templateId      String
   orderId         String         @unique
-
-  // Customization content
   recipientName   String
   senderName      String
-  message         String         @db.Text
-
-  // Background settings
+  message         String
   backgroundType  BackgroundType @default(IMAGE)
-  backgroundColor String?        // Hex color
-  backgroundUrl   String?        // Image/video URL
-
-  // Audio settings
-  musicUrl        String?        // Selected music URL
+  backgroundColor String?
+  backgroundUrl   String?
+  musicUrl        String?
   musicVolume     Float          @default(0.5)
-
-  // AR Effects configuration
   arEffects       Json           @default("[]")
-  // Example: [{"type": "hearts", "intensity": 0.8}, {"type": "glow", "color": "#ff69b4"}]
-
-  // Voice triggers
   voiceTriggers   Json           @default("[]")
-  // Example: [{"phrase": "I love you", "effect": "hearts"}, {"phrase": "Happy Valentine", "effect": "fireworks"}]
-
-  // Gesture triggers
   gestureTriggers Json           @default("[]")
-  // Example: [{"gesture": "ILoveYou", "effect": "hearts"}, {"gesture": "Victory", "effect": "confetti"}]
-
-  // Card settings
   isPublished     Boolean        @default(false)
-  expiresAt       DateTime?      // Optional expiry
-
-  // Stats
+  expiresAt       DateTime?
   viewCount       Int            @default(0)
   lastViewedAt    DateTime?
-
-  // Relations
-  user            User?          @relation(fields: [userId], references: [id])
-  template        Template       @relation(fields: [templateId], references: [id])
-  order           Order          @relation(fields: [orderId], references: [id])
-  analytics       Analytics[]
-
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
+  analytics       Analytics[]
+  order           Order          @relation(fields: [orderId], references: [id])
+  template        Template       @relation(fields: [templateId], references: [id])
+  user            User?          @relation(fields: [userId], references: [id])
 
   @@index([slug])
   @@index([userId])
@@ -214,26 +145,41 @@ model Card {
 }
 
 model Analytics {
-  id          String   @id @default(cuid())
-  cardId      String
-  eventType   String   // "view", "gesture_triggered", "voice_triggered", "shared"
-  eventData   Json     @default("{}")
-  userAgent   String?
-  ipHash      String?  // Hashed IP for privacy
-  country     String?
-
-  card        Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  cardId    String
+  eventType String
+  eventData Json     @default("{}")
+  userAgent String?
+  ipHash    String?
+  country   String?
+  createdAt DateTime @default(now())
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
 
   @@index([cardId])
   @@index([eventType])
   @@index([createdAt])
 }
 
-// Admin settings/config
 model Setting {
   key       String   @id
   value     Json
   updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum BackgroundType {
+  IMAGE
+  VIDEO
+  COLOR
 }

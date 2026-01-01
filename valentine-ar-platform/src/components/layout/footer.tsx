@@ -70,14 +70,14 @@ export function Footer() {
             <h3 className="font-semibold text-gray-900 mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="text-sm text-gray-600 hover:text-valentine-500">
+                <button className="text-sm text-gray-600 hover:text-valentine-500 transition-colors">
                   Privacy Policy
-                </Link>
+                </button>
               </li>
               <li>
-                <Link href="/terms" className="text-sm text-gray-600 hover:text-valentine-500">
+                <button className="text-sm text-gray-600 hover:text-valentine-500 transition-colors">
                   Terms of Service
-                </Link>
+                </button>
               </li>
             </ul>
           </div>

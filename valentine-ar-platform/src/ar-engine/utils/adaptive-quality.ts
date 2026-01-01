@@ -126,8 +126,8 @@ export function getRecommendedQuality(): "high" | "medium" | "low" {
     return "medium";
   }
 
-  // Check memory (if available)
-  const memory = (performance as any).memory;
+  // Check memory (if available) - non-standard Chrome feature
+  const memory = (performance as unknown as { memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
   if (memory) {
     const usedMemoryMB = memory.usedJSHeapSize / 1048576;
     const totalMemoryMB = memory.jsHeapSizeLimit / 1048576;

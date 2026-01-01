@@ -58,9 +58,9 @@ export async function POST(req: NextRequest) {
         backgroundUrl: validatedData.backgroundUrl,
         musicUrl: validatedData.musicUrl,
         musicVolume: validatedData.musicVolume,
-        arEffects: validatedData.arEffects as any,
-        voiceTriggers: validatedData.voiceTriggers as any,
-        gestureTriggers: validatedData.gestureTriggers as any,
+        arEffects: validatedData.arEffects,
+        voiceTriggers: validatedData.voiceTriggers,
+        gestureTriggers: validatedData.gestureTriggers,
         updatedAt: new Date(),
       },
     });

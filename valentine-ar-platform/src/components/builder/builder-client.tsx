@@ -83,6 +83,20 @@ export function BuilderClient({ card }: BuilderClientProps) {
           </div>
         </div>
       </div>
+
+      {/* Sticky mobile button */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t lg:hidden z-50 safe-area-inset-bottom">
+        <Button
+          className="w-full bg-valentine-500 hover:bg-valentine-600 shadow-lg"
+          onClick={saveCard}
+          disabled={isSaving}
+        >
+          {isSaving ? "Saving..." : "Save & Continue"}
+        </Button>
+      </div>
+
+      {/* Add padding at bottom for mobile to account for sticky button */}
+      <div className="h-24 lg:hidden" />
     </div>
   );
 }

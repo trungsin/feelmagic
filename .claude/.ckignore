@@ -11,7 +11,7 @@ build
 
 # Python
 __pycache__
-.venv
+!.venv
 venv
 
 # Go/PHP/Rust/Java

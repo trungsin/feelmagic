@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { generateUniqueSlug } from "@/lib/slug"
 import { env } from "@/lib/env"
-import { polarOrderEventSchema } from "@/lib/validations/checkout"
+import { polarOrderEventSchema, type PolarOrderEvent } from "@/lib/validations/checkout"
 import crypto from "crypto"
 
 /**
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     // Get raw body for signature verification
     const body = await req.text()
     const signature = req.headers.get("webhook-signature") ||
-                      req.headers.get("polar-signature")
+      req.headers.get("polar-signature")
 
     // CRITICAL: Verify webhook signature
     if (!signature) {
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function handleOrderCreated(orderData: any) {
+async function handleOrderCreated(orderData: PolarOrderEvent) {
   try {
     console.log("Processing order:", orderData.id)
 

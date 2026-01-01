@@ -12,7 +12,10 @@ interface Props {
 async function getOrderByCheckoutId(checkoutId: string) {
   return prisma.order.findFirst({
     where: {
-      polarCheckoutId: checkoutId,
+      OR: [
+        { polarCheckoutId: checkoutId },
+        { polarOrderId: checkoutId }, // Handle demo mode
+      ],
       status: "PAID",
     },
     include: {

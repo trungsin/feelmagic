@@ -13,7 +13,7 @@ import { NextRequest, NextResponse } from "next/server"
  * GET /api/admin/templates
  * List all templates (admin only)
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     await requireAdminAPI()
 
